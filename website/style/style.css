@@ -1,0 +1,58 @@
+header > h1 > a, nav a {
+    text-decoration: none;
+    color: #f8f9fa !important;
+}
+
+header > h1 > a:hover, aside a:hover, section a:hover {
+    color: goldenrod !important;
+}
+
+main section ul > li {
+    max-width: 80% !important;
+    background-color: black !important;
+    box-sizing: border-box !important;
+}
+
+main section ul > li a {
+    padding: 5% 0;
+    font-size: larger;
+    text-decoration: none;
+    color: #f8f9fa !important;
+}
+
+main article {
+    box-sizing: border-box !important;
+}
+
+main article header img {
+    max-width: 200px;
+}
+
+img[src$=".svg"] {
+    filter: invert(100%);
+}
+
+aside p {
+    font-size: small;
+}
+
+aside a {
+    text-decoration: none;
+    color: black;
+}
+
+aside p:nth-child(2) > a {
+    font-size: medium;
+    font-weight: bold;
+}
+
+aside img {
+    max-width: 50px;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
