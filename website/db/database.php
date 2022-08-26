@@ -41,14 +41,6 @@ class DatabaseHelper {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Order of parameters:
-     *     0 - item name
-     *     1 - brand name
-     *     2 - brand id
-     *     3 - category id
-     *     4 - item limit
-     */
     public function getItems(array $parameters) {
         $query = 
             "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemstock, brandshortname ".
@@ -56,7 +48,7 @@ class DatabaseHelper {
             "JOIN item_has_category ON item = itemid ".
             "JOIN category ON category = categoryid ".
             "WHERE TRUE";
-        foreach ($parameters as $param => $_) {
+        foreach ($parameters as $param => $value) {
             switch ($param) {
                 case "search":
                     /*
@@ -64,6 +56,7 @@ class DatabaseHelper {
                      * Also, ':search' can appear only once, it seems, so the search string must be duplicated.
                      */
                     $query .= " AND (MATCH (item.itemname) AGAINST (:search IN BOOLEAN MODE) OR MATCH (brand.brandname) AGAINST (:search_dup IN BOOLEAN MODE))";
+                    $parameters["search_dup"] = $parameters["search"];
                     break;
                 case "brandid":
                     $query .= " AND brandid = :brandid";
@@ -71,28 +64,33 @@ class DatabaseHelper {
                 case "categoryid":
                     $query .= " AND categoryid = :categoryid";
                     break;
+                case "itemgroup":
+                    $query .= " AND FIND_IN_SET(CAST(itemid AS CHAR), :itemgroup)";
             }
         }
         if (isset($parameters["limit"])) {
             $query .= " LIMIT :limit";
         }
         $stmt = $this->pdo->prepare($query);
-
-        if (isset($parameters["search"])) {
-            $parameters["search_dup"] = $parameters["search"];
-        }
         $stmt->execute($parameters);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getItemDetails($id) {
+    public function getItemDetails(int $id) {
+        $stmt = $this->pdo->prepare(
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemstock, itemcreator, itempublisher, brandshortname ".
+            "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
+            "WHERE itemid = :id"
+        );
+        $stmt->execute(array("id" => $id));
 
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     public function getLatestItems(int $n = -1) {
         $query = 
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, brandshortname ".
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemstock, brandshortname ".
             "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
             "ORDER BY iteminsertiondate DESC";
         if ($n > 0) {
@@ -113,7 +111,7 @@ class DatabaseHelper {
             return array();
         }
         $stmt = $this->pdo->prepare(
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, brandshortname ".
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemstock, brandshortname ".
             "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
             "WHERE itemdiscount > 0.0 ".
             "AND itemstock > 0 ".

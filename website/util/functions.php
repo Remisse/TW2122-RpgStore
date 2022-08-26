@@ -5,14 +5,6 @@
         return $currency.$amount;
     }
 
-    function countItemsInCart() {
-        $sum = 0;
-        foreach ($_SESSION["cart"] as $cartItem) {
-            $sum += $cartItem["qty"];
-        }
-        return $sum;
-    }
-
     function prepareItemsForAPI(&$items) {
         for ($i = 0; $i < count($items); $i++) {
             $discount = $items[$i]["itemdiscount"];

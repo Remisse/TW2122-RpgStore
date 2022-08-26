@@ -26,7 +26,7 @@
     <div class="container-fluid px-0 overflow-visible">
         <div class="row bg-dark d-flex justify-content-between align-items-center">
             <div class="col-6">
-                <nav class="navbar navbar-expand-lg navbar-dark py-1">
+                <nav class="navbar navbar-expand-lg navbar-dark ps-2 py-0">
                     <button type="button" class="navbar-toggler" data-bs-toggle="offcanvas" data-bs-target="nav > div:first-of-type">
                         <img src="svg/menu.svg" alt="Mostra il menu di navigazione" />
                     </button>
@@ -67,23 +67,23 @@
             </div>
             <div class="col-6">
                 <nav class="nav justify-content-end flex-nowrap">
-                    <a class="nav-link" href="cart.php">
+                    <a class="nav-link font-monospace text-nowrap" href="cart.php">
                         <img src="svg/cart.svg" alt="Carrello" />
                         <?php 
                         if (isset($_SESSION["cart"])) {
-                            echo "(".countItemsInCart().")";
+                            echo "(".Cart::countAll().")";
                         }
                         ?>
                     </a>
-                    <a class="nav-link" href="#"><img src="svg/bell.svg" alt="Notifiche" /> (n)</a>
+                    <a class="nav-link font-monospace text-nowrap" href="#"><img src="svg/bell.svg" alt="Notifiche" /> (n)</a>
                 </nav>
             </div>
         </div>
     </div>
-    <div class="container-fluid overflow-scroll">
-        <div class="row d-flex justify-content-around align-items-top">
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-around">
             <div class="col-12 col-md-8">
-                <main class="bg-light">
+                <main class="bg-light px-3">
                     <?php
                     if (isset($template_params["template"])) {
                         require($template_params["template"]); 
@@ -92,24 +92,18 @@
                 </main>
             </div>
             <div class="col-12 col-md-4">
-                <aside class="bg-light border px-3">
-                    <section class="pb-3">
-                        <h4 class="text-center py-3">Novità</h4>
-                        <!-- Populated via JS. -->
-                    </section>
+                <aside class="bg-light px-3">
+                    <!-- Populated via JS. -->
                 </aside>
-                <aside class="bg-light border px-3">
-                    <section class="pb-3">
-                        <h4 class="text-center py-3">Articoli in sconto</h4>
-                        <!-- Populated via JS. -->
-                    </section>
+                <aside class="bg-light px-3">
+                    <!-- Populated via JS. -->
                 </aside>
             </div>
         </div>
     </div>
 
     <footer>
-        <div class="container-fluid bg-dark py-2">
+        <div class="bg-dark py-2">
             <p class="text-bg-dark text-center mb-0">RPG Store - Progetto per Tecnologie Web A.A. 2021/2022</p>
         </div>
     </footer>
