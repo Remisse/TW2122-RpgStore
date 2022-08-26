@@ -35,7 +35,7 @@ $(document).ready(function() {
                         </ul>
                     </li>
                     `
-                $("section > ul").append(element)
+                $("main section > ul").append(element)
             }
         )}
     })
