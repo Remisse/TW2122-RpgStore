@@ -18,8 +18,9 @@ USE `rpgstore` ;
 CREATE TABLE IF NOT EXISTS `rpgstore`.`user` (
   `userid` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(100) NOT NULL,
-  `password` VARCHAR(16) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
+  `billingaddress` VARCHAR(100),
   PRIMARY KEY (`userid`))
 ENGINE = InnoDB;
 
@@ -29,7 +30,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `rpgstore`.`client` (
   `user` INT NOT NULL,
-  `billingaddress` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`user`),
   INDEX `fk_client_is_user_idx` (`user` ASC),
   CONSTRAINT `fk_client_is_user`
@@ -101,7 +101,6 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`order` (
     `orderid` INT NOT NULL AUTO_INCREMENT,
     `user` INT NOT NULL,
     `creationdate` DATE NOT NULL,
-    `paymentdate` DATE,
     PRIMARY KEY (`orderid`),
     INDEX `fk_order_has_user` (`user` ASC),
     CONSTRAINT `fk_order_has_user`

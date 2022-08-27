@@ -8,6 +8,7 @@
     require_once("db/database.php");
     require_once("util/functions.php");
     require_once("util/cartmanager.php");
+    require_once("util/sessionmanager.php");
 
     $dbh = new DatabaseHelper("localhost", "root", "root", "rpgstore", "utf8mb4");
 

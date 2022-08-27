@@ -1,9 +1,10 @@
-INSERT INTO `user` (`email`, `password`, `name`) VALUES
-('ginopino@mail.com', 'pass2019', 'Gino Pino'),
-('cippalippa@mail.com', 'pass2019', 'Cippa Lippa');
+-- Password for both users: 'pass2019'
+INSERT INTO `user` (`email`, `password`, `name`, `billingaddress`) VALUES
+('ginopino@mail.com', '$2y$10$S5byL4yThqZ2OKla3GGp0.K9ILxAzYNdm6KEx/y.GGTCDI7nd7NCa', 'Gino Pino', 'Viale Vialone 88, 47521, Cesena (FC)'),
+('cippalippa@mail.com', '$2y$10$S5byL4yThqZ2OKla3GGp0.K9ILxAzYNdm6KEx/y.GGTCDI7nd7NCa', 'Cippa Lippa', 'Ciaooooooo');
 
-INSERT INTO `client` (`user`, `billingaddress`) VALUES
-(1, 'Viale Vialone 88, 47521, Cesena (FC)');
+INSERT INTO `client` VALUES
+(1);
 
 INSERT INTO `admin` VALUES
 (2);

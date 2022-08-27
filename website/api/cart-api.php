@@ -22,17 +22,12 @@
                 }
             }
             break;
-        case "count":
-            if (isset($_GET["id"])) {
-                $item = $dbh->getItemDetails($_GET["id"]);
-                if ($item != false) {
-                    $result["msg"] = Cart::count($item["itemid"]);
-                }
-            }
-            break;
         case "whole_cart":
-            $item_ids = implode(",", array_keys(Cart::get()));
-            $result["cartitems"] = $dbh->getItems(array("itemgroup" => $item_ids));
+            $result["cartitems"] = $dbh->getItems(array("itemgroup" => Cart::getRaw()));
+            
+            for ($i = 0; $i < count($result["cartitems"]); $i++) {
+                $result["cartitems"][$i]["cartqty"] = Cart::count($result["cartitems"][$i]["itemid"]);
+            }
 
             prepareItemsForAPI($result["cartitems"]);
             $result["msg"] = "";

@@ -25,7 +25,7 @@
     </div>
     <div class="container-fluid px-0 overflow-visible">
         <div class="row bg-dark d-flex justify-content-between align-items-center">
-            <div class="col-6">
+            <div class="col-8">
                 <nav class="navbar navbar-expand-lg navbar-dark ps-2 py-0">
                     <button type="button" class="navbar-toggler" data-bs-toggle="offcanvas" data-bs-target="nav > div:first-of-type">
                         <img src="svg/menu.svg" alt="Mostra il menu di navigazione" />
@@ -35,6 +35,9 @@
                             <button type="button" class="btn" data-bs-dismiss="offcanvas">
                                 <img src="svg/x.svg" alt="Chiudi il menu di navigazione" />
                             </button>
+                            <?php if (Session::isUserLoggedIn()): ?>
+                                <h5>Ciao, <?php echo Session::name(); ?></h5>
+                            <?php endif; ?>
                         </div>
                         <div class="offcanvas-body">
                             <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
@@ -46,32 +49,43 @@
                                     <button type="button" class="btn nav-link dropdown-toggle" data-bs-toggle="dropdown">Categorie</button>
                                     <!-- Populated via JS. -->
                                 </li>
-                                <li class="nav-item">
-                                    <!-- TODO Link to the user area if already logged in. -->
-                                    <a class="nav-link" href="login.php">Accedi</a>
-                                </li>
+                                <?php if (!Session::isUserLoggedIn()): ?>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="login.php">Accedi</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="signup.php">Registrati</a>
+                                        </li>
+                                <?php else: ?>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="login.php">Profilo</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="logout.php">Disconnettiti</a>
+                                        </li>
+                                <?php endif; ?>
                                 <li>
                                     <form title="Cerca nel sito" method="get" action="items.php" class="d-flex ms-2">
-                                        <label for="sitesearch" aria-label="Cerca nel sito"></label>
-                                        <input type="search" name="search" class="form-control me-2" placeholder="Cerca nel sito" />
+                                        <label for="sitesearch">Cerca nel sito</label>
+                                        <input type="search" name="search" id="search" class="form-control me-2" placeholder="Cerca nel sito" />
                                         <button type="submit" class="btn btn-primary">
                                             <img src="svg/search.svg" alt="Effettua ricerca" />
                                         </button>
                                     </form>
                                 </li>
-                                <!-- TODO Add a logout button. -->
                             </ul>
                         </div>
                     </div>
                 </nav>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <nav class="nav justify-content-end flex-nowrap">
                     <a class="nav-link font-monospace text-nowrap" href="cart.php">
                         <img src="svg/cart.svg" alt="Carrello" />
                         <?php 
-                        if (isset($_SESSION["cart"])) {
-                            echo "(".Cart::countAll().")";
+                        $cartCount = Cart::countAll();
+                        if ($cartCount > 0) {
+                            echo "(".$cartCount.")";
                         }
                         ?>
                     </a>

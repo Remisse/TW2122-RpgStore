@@ -43,7 +43,7 @@ class DatabaseHelper {
 
     public function getItems(array $parameters) {
         $query = 
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemstock, brandshortname ".
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, brandshortname ".
             "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
             "JOIN item_has_category ON item = itemid ".
             "JOIN category ON category = categoryid ".
@@ -66,6 +66,8 @@ class DatabaseHelper {
                     break;
                 case "itemgroup":
                     $query .= " AND FIND_IN_SET(CAST(itemid AS CHAR), :itemgroup)";
+                    $parameters["itemgroup"] = toSQLFriendlyIds($parameters["itemgroup"]);
+                    break;
             }
         }
         if (isset($parameters["limit"])) {
@@ -79,7 +81,7 @@ class DatabaseHelper {
 
     public function getItemDetails(int $id) {
         $stmt = $this->pdo->prepare(
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemstock, itemcreator, itempublisher, brandshortname ".
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, itemcreator, itempublisher, brandshortname ".
             "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
             "WHERE itemid = :id"
         );
@@ -90,7 +92,7 @@ class DatabaseHelper {
 
     public function getLatestItems(int $n = -1) {
         $query = 
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemstock, brandshortname ".
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, brandshortname ".
             "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
             "ORDER BY iteminsertiondate DESC";
         if ($n > 0) {
@@ -111,7 +113,7 @@ class DatabaseHelper {
             return array();
         }
         $stmt = $this->pdo->prepare(
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemstock, brandshortname ".
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, brandshortname ".
             "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
             "WHERE itemdiscount > 0.0 ".
             "AND itemstock > 0 ".
@@ -121,6 +123,91 @@ class DatabaseHelper {
         $stmt->execute(array("n" => $n));
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getItemPrices(array $ids) {
+        $friendly_ids = toSQLFriendlyIds($ids);
+
+        $stmt = $this->pdo->prepare(
+            "SELECT itemid, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS amount ".
+            "FROM item ".
+            "WHERE FIND_IN_SET(CAST(itemid AS CHAR), :itemgroup)"
+        );
+        $stmt->execute(array("itemgroup" => $friendly_ids));
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function checkLogin(string $email) {
+        $query = 
+            "SELECT userid, email, name, password ".
+            "FROM user ".
+            "WHERE email = :email";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute(array("email" => $email));
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function insertOrder(int $userid, array $items) {
+        if (count($items) == 0) {
+            throw new InvalidArgumentException("Items array is empty");
+        }
+
+        $this->pdo->beginTransaction();
+
+        $stmt = $this->pdo->prepare("INSERT INTO `order` SET `user` = :userid, `creationdate` = CURDATE()");
+        $stmt->execute(array("userid" => $userid));
+
+        $orderid = $this->pdo->lastInsertId();
+        foreach ($items as $item) {
+            $stmt2 = $this->pdo->prepare("INSERT INTO `order_has_item` (`order`, item, qty, unitprice) VALUES (:orderid, :itemid, :itemqty, :amount)");
+            $stmt2->execute(array(
+                "orderid" => $orderid,
+                "itemid" => $item["itemid"],
+                "itemqty" => $item["cartqty"],
+                "amount" => $item["amount"])
+            );
+
+            $stmt3 = $this->pdo->prepare("UPDATE item SET itemstock = itemstock - :cartqty WHERE itemid = :itemid");
+            $stmt3->execute(array("cartqty" => $item["cartqty"], "itemid" => $item["itemid"]));
+        }
+
+        return $this->pdo->commit();
+    }
+
+    public function getUserDetails($userid) {
+        $stmt = $this->pdo->prepare("SELECT userid, email, name, billingaddress FROM user WHERE userid = :userid");
+        $stmt->execute(array("userid" => $userid));
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function insertClient($email, $password, $name) {
+        $this->pdo->beginTransaction();
+
+        $stmt = $this->pdo->prepare("INSERT INTO user (email, password, name) VALUES (:email, :password, :name)");
+        $stmt->execute(array("email" => $email, "password" => $password, "name" => $name));
+
+        $userid = $this->pdo->lastInsertId();
+        $stmt2 = $this->pdo->prepare("INSERT INTO client VALUES (:userid)");
+        $stmt2->execute(array("userid" => $userid)); 
+
+        return $this->pdo->commit();
+    }
+
+    public function isEmailAvailable($email) {
+        $stmt = $this->pdo->prepare("SELECT email FROM user WHERE email = :email");
+        $stmt->execute(array("email" => $email));
+
+        return count($stmt->fetchAll(PDO::FETCH_ASSOC)) == 0;
+    }
+
+    public function isUserAdmin($userid) {
+        $stmt = $this->pdo->prepare("SELECT user FROM admin WHERE user = :userid");
+        $stmt->execute(array("userid" => $userid));
+
+        return count($stmt->fetchAll(PDO::FETCH_ASSOC)) == 1;
     }
 }
 ?>

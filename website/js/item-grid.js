@@ -4,49 +4,19 @@ $(document).ready(function() {
 
         $(data).each(function() {
             const footer = document.createElement("footer")
-            footer.className = "card-footer bg-transparent text-end"
+            const footerDiv = document.createElement("div")
+            footerDiv.className = "card-footer bg-transparent text-end"
 
-            const buyButton = document.createElement("button")
-            buyButton.className = "btn btn-primary"
-            buyButton.setAttribute("type", "button")
-            $(buyButton).append(`<img src="svg/cart-plus.svg" alt="Aggiungi al carrello" />`)
-            $(buyButton).prop("disabled", this["itemstock"] === 0)
+            const buyButton = addToCartButton(this)
 
-            const itemId = this["itemid"]
-            $(buyButton).on("click", function() {
-                $.ajax({url: `api/cart-api.php?action=add&id=${itemId}`, dataType: "json", success: function(result) {
-                    $(buyButton).html(result["msg"])
-                    updateCartInNav(result["countAll"])
-                }})
-            })
-            $(footer).append(buyButton)
-
-            const article = document.createElement("article")
-            article.className = "card h-100"
-            $(article).append(
-                `
-                <section class="d-flex card-body">
-                    <div class="row">
-                        <div class="col-4 col-md-12">
-                            <img src="${this["itemimg"]}" class="img-fluid rounded" alt="" />
-                        </div>
-                        <div class="d-flex justify-content-between col-8 col-md-12">
-                            <div class="d-flex flex-column px-0">
-                                <h6 class="card-title">${this["brandshortname"]} ${this["itemname"]}</h6>
-                                <p class="card-text">${formatItemPrice(this)}</p>
-                                <p class="card-text mt-auto">${formatItemAvailability(this)}</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                `
-            )
-            $(article).append(footer)
+            const card = itemToCard(this, footer, "row row-cols-md-1")
 
             const div = document.createElement("div")
-            div.className = "col-12 col-md-4 col-lg-3 px-2 py-2"
-            
-            $(div).append(article)
+            div.className = "col-12 col-md-4 col-lg-3 px-1 py-1"
+
+            $(footerDiv).append(buyButton)
+            $(footer).append(footerDiv)
+            $(div).append(card)
             $(container).append(div)
         })
     }})

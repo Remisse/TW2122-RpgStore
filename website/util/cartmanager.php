@@ -45,7 +45,7 @@ class Cart {
         return array_sum($_SESSION["cart"]);
     }
 
-    public static function get() {
+    public static function getRaw() {
         Cart::init();
 
         return $_SESSION["cart"];

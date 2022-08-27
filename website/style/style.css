@@ -4,24 +4,23 @@ header > h1 > a, nav a {
 }
 
 header > h1 > a:hover, aside a:hover, section a:hover {
-    color: goldenrod !important;
+    color: green !important;
 }
 
 main section > section ul > li {
-    max-width: 80% !important;
-    background-color: rgb(46, 46, 46) !important;
     box-sizing: border-box !important;
-}
-
-main section > section ul > li a {
-    padding: 5% 0;
-    font-size: larger;
-    text-decoration: none;
-    color: #f8f9fa !important;
 }
 
 img[src$=".svg"] {
     filter: invert(100%);
+}
+
+main article img:first-of-type {
+    max-width: 120px;
+}
+
+aside img:first-of-type {
+    max-width: 80px;
 }
 
 aside p {
@@ -36,4 +35,8 @@ aside a {
 aside p:nth-child(2) > a {
     font-size: medium;
     font-weight: bold;
+}
+
+label[for="sitesearch"], label[for="billing"] {
+    display: none;
 }
