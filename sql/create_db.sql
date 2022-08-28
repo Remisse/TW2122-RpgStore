@@ -70,27 +70,12 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rpgstore`.`item`
+-- Table `rpgstore`.`orderstatus`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `rpgstore`.`item` (
-  `itemid` INT NOT NULL AUTO_INCREMENT,
-  `itemname` VARCHAR(100) NOT NULL,
-  `itemdescription` MEDIUMTEXT NOT NULL,
-  `iteminsertiondate` DATE NOT NULL,
-  `itemimg` VARCHAR(100) NOT NULL,
-  `itemprice` BIGINT NOT NULL,
-  `itemdiscount` DECIMAL (12,8) NOT NULL DEFAULT 0.0,
-  `itemstock` INT NOT NULL,
-  `itembrand` INT,
-  `itemcreator` VARCHAR(100) NOT NULL,
-  `itempublisher` VARCHAR(100) NOT NULL,
-  PRIMARY KEY (`itemid`),
-  FULLTEXT (`itemname`),
-  CONSTRAINT `fk_item_part_of_brand`
-    FOREIGN KEY (`itembrand`)
-    REFERENCES `rpgstore`.`brand` (`brandid`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+CREATE TABLE IF NOT EXISTS `rpgstore`.`orderstatus` (
+    `statusid` INT NOT NULL AUTO_INCREMENT,
+    `statusdescription` VARCHAR(30) NOT NULL,
+    PRIMARY KEY (`statusid`))
 ENGINE = InnoDB;
 
 
@@ -101,11 +86,18 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`order` (
     `orderid` INT NOT NULL AUTO_INCREMENT,
     `user` INT NOT NULL,
     `creationdate` DATE NOT NULL,
+    `status` INT NOT NULL DEFAULT 1,
     PRIMARY KEY (`orderid`),
-    INDEX `fk_order_has_user` (`user` ASC),
+    INDEX `fk_order_has_user_idx` (`user` ASC),
+    INDEX `fk_order_status_idx` (`status` ASC),
     CONSTRAINT `fk_order_has_user`
         FOREIGN KEY (`user`)
         REFERENCES `rpgstore`.`user` (`userid`)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION,
+    CONSTRAINT `fk_order_status`
+        FOREIGN KEY (`status`)
+        REFERENCES `rpgstore`.`orderstatus` (`statusid`)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -130,21 +122,30 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `rpgstore`.`item_has_category`
+-- Table `rpgstore`.`item`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `rpgstore`.`item_has_category` (
-  `item` INT NOT NULL,
-  `category` INT NOT NULL,
-  PRIMARY KEY (`item`, `category`),
-  INDEX `fk_item_has_category_category1_idx` (`category` ASC),
-  INDEX `fk_item_has_category_item1_idx` (`item` ASC),
-  CONSTRAINT `fk_item_has_category_item1`
-    FOREIGN KEY (`item`)
-    REFERENCES `rpgstore`.`item` (`itemid`)
+CREATE TABLE IF NOT EXISTS `rpgstore`.`item` (
+  `itemid` INT NOT NULL AUTO_INCREMENT,
+  `itemname` VARCHAR(100) NOT NULL,
+  `itemdescription` MEDIUMTEXT NOT NULL,
+  `iteminsertiondate` DATE NOT NULL,
+  `itemimg` VARCHAR(100) NOT NULL,
+  `itemprice` BIGINT NOT NULL,
+  `itemdiscount` DECIMAL (12,8) NOT NULL DEFAULT 0.0,
+  `itemstock` INT NOT NULL,
+  `itemcategory` INT NOT NULL,
+  `itembrand` INT,
+  `itemcreator` VARCHAR(100) NOT NULL,
+  `itempublisher` VARCHAR(100),
+  PRIMARY KEY (`itemid`),
+  FULLTEXT (`itemname`),
+  CONSTRAINT `fk_item_part_of_brand`
+    FOREIGN KEY (`itembrand`)
+    REFERENCES `rpgstore`.`brand` (`brandid`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_item_has_category_category1`
-    FOREIGN KEY (`category`)
+  CONSTRAINT `fk_item_has_category`
+    FOREIGN KEY (`itemcategory`)
     REFERENCES `rpgstore`.`category` (`categoryid`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -183,6 +184,7 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`ordernotification` (
     `user` INT NOT NULL,
     `order` INT NOT NULL,
     `message` VARCHAR(100) NOT NULL,
+    `read` BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY (`notificationid`),
         CONSTRAINT `fk_notification_has_order`
         FOREIGN KEY (`order`)

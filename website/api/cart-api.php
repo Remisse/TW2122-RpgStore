@@ -5,32 +5,26 @@
         header("location: ../index.php");
     }
 
+    $result["msg"] = "";
+    
     switch ($_GET["action"]) {
         case "add":
-            if (isset($_GET["id"])) {
-                $item = $dbh->getItemDetails($_GET["id"]);
-                if ($item != false && $item["itemstock"] > 0) {
-                    $result["msg"] = Cart::add($item["itemid"]) ? "Aggiunto" : "Già nel carrello";
-                }
+            $stock = $dbh->getItemStock($_GET["id"] ?? -1);
+            if ($stock != null && $stock > 0) {
+                $result["msg"] = Cart::add($_GET["id"]) ? "Aggiunto" : "Già nel carrello";
             }
             break;
         case "set":
-            if (isset($_GET["id"]) && isset($_GET["qty"])) {
-                $item = $dbh->getItemDetails($_GET["id"]);
-                if ($item != false && $_GET["qty"] <= $item["itemstock"]) {
-                    $result["msg"] = Cart::setQuantity($item["itemid"], $_GET["qty"]) ? "Modificato" : "Operazione non riuscita";
-                }
+            $id = $_GET["id"] ?? -1;
+            $stock = $dbh->getItemStock($id);
+            if ($stock != null && $_GET["qty$id"] <= $stock) {
+                $result["msg"] = Cart::setQuantity($id, $_GET["qty$id"]) ? "Modificato" : "Operazione non riuscita";
             }
             break;
         case "whole_cart":
             $result["cartitems"] = $dbh->getItems(array("itemgroup" => Cart::getRaw()));
-            
-            for ($i = 0; $i < count($result["cartitems"]); $i++) {
-                $result["cartitems"][$i]["cartqty"] = Cart::count($result["cartitems"][$i]["itemid"]);
-            }
-
+            addCartQuantityForEachItem($result["cartitems"]);
             prepareItemsForAPI($result["cartitems"]);
-            $result["msg"] = "";
             break;
     }
     if (isset($_GET["redirect"])) {

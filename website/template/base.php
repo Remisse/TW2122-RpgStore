@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="h-100">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RPG Store - <?php echo $template_params["title"]; ?></title>
@@ -17,84 +17,104 @@
     endif;
     ?>
 </head>
-<body class="bg-light">
-    <div class="row bg-dark overflow-hidden">
-        <header class="text-bg-dark py-2">
+<body class="d-flex flex-column h-100 bg-light">
+    <header>
+        <div class="row bg-dark overflow-hidden text-bg-dark py-2">
             <h1 class="text-center text-nowrap"><a href="index.php">RPG Store</a></h1>
-        </header>
-    </div>
-    <div class="container-fluid px-0 overflow-visible">
-        <div class="row bg-dark d-flex justify-content-between align-items-center">
-            <div class="col-8">
-                <nav class="navbar navbar-expand-lg navbar-dark ps-2 py-0">
-                    <button type="button" class="navbar-toggler" data-bs-toggle="offcanvas" data-bs-target="nav > div:first-of-type">
-                        <img src="svg/menu.svg" alt="Mostra il menu di navigazione" />
-                    </button>
-                    <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1">
-                        <div class="offcanvas-header">
-                            <button type="button" class="btn" data-bs-dismiss="offcanvas">
-                                <img src="svg/x.svg" alt="Chiudi il menu di navigazione" />
-                            </button>
-                            <?php if (Session::isUserLoggedIn()): ?>
-                                <h5>Ciao, <?php echo Session::name(); ?></h5>
-                            <?php endif; ?>
+        </div>
+        <div class="container-fluid px-0 overflow-visible">
+            <div class="row bg-dark d-flex justify-content-between align-items-center py-1">
+                <div class="col-8">
+                    <nav class="navbar navbar-expand-lg navbar-dark ps-2 py-0">
+                        <button type="button" class="navbar-toggler p-2" data-bs-toggle="offcanvas" data-bs-target="nav > div:first-of-type">
+                            <img src="svg/menu.svg" alt="Mostra il menu di navigazione" />
+                        </button>
+                        <div class="offcanvas offcanvas-start text-bg-dark" role="dialog" aria-label="Menu di navigazione" tabindex="-1">
+                            <div class="offcanvas-header">
+                                <button type="button" class="btn" data-bs-dismiss="offcanvas">
+                                    <img src="svg/x.svg" alt="Chiudi il menu di navigazione" />
+                                </button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
+                                    <li class="nav-item dropdown">
+                                        <button type="button" class="btn nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Giochi</button>
+                                        <!-- Populated via JS. -->
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <button type="button" class="btn nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Categorie</button>
+                                        <!-- Populated via JS. -->
+                                    </li>
+                                    <?php if (!Session::isUserLoggedIn()): ?>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="login.php">Accedi</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="signup.php">Registrati</a>
+                                            </li>
+                                    <?php else: ?>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="login.php">Profilo</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="logout.php">Esci</a>
+                                            </li>
+                                    <?php endif; ?>
+                                    <li>
+                                        <form title="Cerca nel sito" method="get" action="items.php" class="d-flex ms-2">
+                                            <ul class="list-group list-group-horizontal bg-dark gap-1">
+                                                <li class="list-group-item p-0 bg-dark">
+                                                    <!-- This label is ignored by accessibility checkers for some reason. -->
+                                                    <label for="search">Cerca nel sito</label>
+                                                    <input type="search" name="search" id="search" role="search" placeholder="Scrivi..." class="form-control me-2" />
+                                                </li>
+                                                <li class="list-group-item p-0 bg-dark">
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <img src="svg/search.svg" alt="Effettua ricerca" />
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="offcanvas-body">
-                            <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
-                                <li class="nav-item dropdown">
-                                    <button type="button" class="btn nav-link dropdown-toggle" data-bs-toggle="dropdown">Giochi</button>
-                                    <!-- Populated via JS. -->
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <button type="button" class="btn nav-link dropdown-toggle" data-bs-toggle="dropdown">Categorie</button>
-                                    <!-- Populated via JS. -->
-                                </li>
-                                <?php if (!Session::isUserLoggedIn()): ?>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="login.php">Accedi</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="signup.php">Registrati</a>
-                                        </li>
-                                <?php else: ?>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="login.php">Profilo</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="logout.php">Disconnettiti</a>
-                                        </li>
-                                <?php endif; ?>
-                                <li>
-                                    <form title="Cerca nel sito" method="get" action="items.php" class="d-flex ms-2">
-                                        <label for="sitesearch">Cerca nel sito</label>
-                                        <input type="search" name="search" id="search" class="form-control me-2" placeholder="Cerca nel sito" />
-                                        <button type="submit" class="btn btn-primary">
-                                            <img src="svg/search.svg" alt="Effettua ricerca" />
-                                        </button>
-                                    </form>
-                                </li>
+                    </nav>
+                </div>
+                <div class="col-4">
+                    <nav class="nav justify-content-end flex-nowrap">
+                        <a class="nav-link font-monospace text-nowrap" href="cart.php">
+                            <img src="svg/cart.svg" alt="Carrello" />
+                            <span>
+                                <?php 
+                                $cartCount = Cart::countAll();
+                                if ($cartCount > 0) {
+                                    echo "(".$cartCount.")";
+                                }
+                                ?>
+                            </span>
+                        </a>
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle font-monospace text-nowrap" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
+                                <img src="svg/bell.svg" alt="Notifiche" />
+                                <span>
+                                    <?php 
+                                    if ($notificationsCount > 0) {
+                                        echo "(".$notificationsCount.")";
+                                    }
+                                    ?>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <!-- Populated via JS. -->
                             </ul>
                         </div>
-                    </div>
-                </nav>
-            </div>
-            <div class="col-4">
-                <nav class="nav justify-content-end flex-nowrap">
-                    <a class="nav-link font-monospace text-nowrap" href="cart.php">
-                        <img src="svg/cart.svg" alt="Carrello" />
-                        <?php 
-                        $cartCount = Cart::countAll();
-                        if ($cartCount > 0) {
-                            echo "(".$cartCount.")";
-                        }
-                        ?>
-                    </a>
-                    <a class="nav-link font-monospace text-nowrap" href="#"><img src="svg/bell.svg" alt="Notifiche" /> (n)</a>
-                </nav>
+                    </nav>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid">
+    </header>
+    <div class="container-fluid flex-shrink-0">
         <div class="row d-flex justify-content-around">
             <div class="col-12 col-md-8">
                 <main class="bg-light px-3">
@@ -105,19 +125,13 @@
                     ?>
                 </main>
             </div>
-            <div class="col-12 col-md-4">
-                <aside class="bg-light px-3">
-                    <!-- Populated via JS. -->
-                </aside>
-                <aside class="bg-light px-3">
-                    <!-- Populated via JS. -->
-                </aside>
+            <div>
+                <!-- Reserved for asides. Set class to "col-12 col-md-4" via JS. -->
             </div>
         </div>
     </div>
-
-    <footer>
-        <div class="bg-dark py-2">
+    <footer class="mt-auto">
+        <div class="container-fluid bg-dark py-2">
             <p class="text-bg-dark text-center mb-0">RPG Store - Progetto per Tecnologie Web A.A. 2021/2022</p>
         </div>
     </footer>

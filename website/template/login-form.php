@@ -1,6 +1,6 @@
 <form action="#" method="POST">
     <div class="text-center py-3">
-        <h2>Login</h2>
+        <h2>Accedi</h2>
     </div>
     <section>
         <div class="container-fluid border rounded text-center p-3">
@@ -10,16 +10,16 @@
                 </div>
             <?php endif; ?>
             <div class="row pb-2">
-                <div class="col-12 col-md-3">
-                    <label for="email" class="form-label">Username:</label>
+                <div class="col-12 col-md-3 text-md-end">
+                    <label for="email" class="form-label">Indirizzo e-mail</label>
                 </div>
                 <div class="col-12 col-md-9">
                     <input type="email" id="email" name="email" class="form-control" required />
                 </div>
             </div>
             <div class="row pb-2">
-                <div class="col-12 col-md-3">
-                    <label for="password" class="form-label">Password:</label>
+                <div class="col-12 col-md-3 text-md-end">
+                    <label for="password" class="form-label">Password</label>
                 </div>
                 <div class="col-12 col-md-9">
                     <input type="password" name="password" id="password" class="form-control" required />

@@ -16,7 +16,7 @@ class Session {
         return true;
     }
 
-    public static function registerLoggedUser($userdata) {
+    public static function register($userdata) {
         foreach (Session::getLoginSessionFields() as $field) {
             $_SESSION[$field] = $userdata[$field];
         }
@@ -31,7 +31,7 @@ class Session {
     }
 
     public static function id() {
-        return Session::isUserLoggedIn() ? $_SESSION["userid"] : false;
+        return Session::isUserLoggedIn() ? $_SESSION["userid"] : -1;
     }
 
     public static function name() {

@@ -42,13 +42,32 @@ class DatabaseHelper {
     }
 
     public function getItems(array $parameters) {
-        $query = 
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, brandshortname ".
-            "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
-            "JOIN item_has_category ON item = itemid ".
-            "JOIN category ON category = categoryid ".
-            "WHERE TRUE";
-        foreach ($parameters as $param => $value) {
+        $commonQueryPart = 
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, categoryname, brandshortname 
+            FROM item LEFT OUTER JOIN brand ON itembrand = brandid ";
+        $query = "";
+        
+        if (isset($parameters["categoryid"])) {
+            $query = 
+                "WITH RECURSIVE cte AS (
+                    SELECT * 
+                    FROM category 
+                    WHERE categoryid = :categoryid 
+                    UNION ALL 
+                    SELECT cat.* 
+                    FROM cte ct, category cat 
+                    WHERE cat.categorysuper = ct.categoryid) ".
+                $commonQueryPart.
+                "JOIN cte ON cte.categoryid = itemcategory 
+                WHERE TRUE";
+        } else {
+            $query = 
+                $commonQueryPart.
+                "JOIN category ON categoryid = itemcategory 
+                WHERE TRUE";
+        }
+
+        foreach ($parameters as $param => $_) {
             switch ($param) {
                 case "search":
                     /*
@@ -60,9 +79,6 @@ class DatabaseHelper {
                     break;
                 case "brandid":
                     $query .= " AND brandid = :brandid";
-                    break;
-                case "categoryid":
-                    $query .= " AND categoryid = :categoryid";
                     break;
                 case "itemgroup":
                     $query .= " AND FIND_IN_SET(CAST(itemid AS CHAR), :itemgroup)";
@@ -79,15 +95,38 @@ class DatabaseHelper {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getItemDetails(int $id) {
+    public function getItem(int $id) {
         $stmt = $this->pdo->prepare(
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, itemcreator, itempublisher, brandshortname ".
-            "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
-            "WHERE itemid = :id"
+            "SELECT item.*, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, categoryname, brandname, brandshortname 
+            FROM item LEFT OUTER JOIN brand ON itembrand = brandid 
+            JOIN category ON itemcategory = categoryid 
+            WHERE itemid = :id"
         );
         $stmt->execute(array("id" => $id));
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getItemName(int $id) {
+        $stmt = $this->pdo->prepare(
+            "SELECT itemname 
+            FROM item 
+            WHERE itemid = :id"
+        );
+        $stmt->execute(array("id" => $id));
+
+        return $stmt->fetch(PDO::FETCH_COLUMN);
+    }
+
+    public function getItemStock(int $id) {
+        $stmt = $this->pdo->prepare(
+            "SELECT itemstock 
+            FROM item 
+            WHERE itemid = :id"
+        );
+        $stmt->execute(array("id" => $id));
+
+        return $stmt->fetch(PDO::FETCH_COLUMN);
     }
 
     public function getLatestItems(int $n = -1) {
@@ -149,16 +188,18 @@ class DatabaseHelper {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function insertOrder(int $userid, array $items) {
+    public function insertOrder(int $userid, array $items, string $messageToAdmins) {
         if (count($items) == 0) {
             throw new InvalidArgumentException("Items array is empty");
         }
 
         $this->pdo->beginTransaction();
 
+        // Create empty order
         $stmt = $this->pdo->prepare("INSERT INTO `order` SET `user` = :userid, `creationdate` = CURDATE()");
         $stmt->execute(array("userid" => $userid));
 
+        // Fill the order with all items from the cart
         $orderid = $this->pdo->lastInsertId();
         foreach ($items as $item) {
             $stmt2 = $this->pdo->prepare("INSERT INTO `order_has_item` (`order`, item, qty, unitprice) VALUES (:orderid, :itemid, :itemqty, :amount)");
@@ -169,9 +210,18 @@ class DatabaseHelper {
                 "amount" => $item["amount"])
             );
 
+            // Update each item's stock
             $stmt3 = $this->pdo->prepare("UPDATE item SET itemstock = itemstock - :cartqty WHERE itemid = :itemid");
             $stmt3->execute(array("cartqty" => $item["cartqty"], "itemid" => $item["itemid"]));
         }
+
+        // Notify all admins about the new order
+        $stmt4 = $this->pdo->prepare(
+            "INSERT INTO ordernotification (user, `order`, message) 
+            SELECT userid, :orderid, :msg 
+            FROM user, `admin` WHERE userid = `admin`.user"
+        );
+        $stmt4->execute(array("orderid" => $orderid, "msg" => $messageToAdmins));
 
         return $this->pdo->commit();
     }
@@ -208,6 +258,36 @@ class DatabaseHelper {
         $stmt->execute(array("userid" => $userid));
 
         return count($stmt->fetchAll(PDO::FETCH_ASSOC)) == 1;
+    }
+
+    public function getUnreadNotificationsCount($userid) {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) AS n FROM ordernotification WHERE user = :userid AND `read` = false");
+        $stmt->execute(array("userid" => $userid));
+
+        return $stmt->fetch(PDO::FETCH_COLUMN);
+    }
+
+    public function getUnreadNotificationsAndMarkAsRead($userid) {
+        $this->pdo->beginTransaction();
+
+        $stmt = $this->pdo->prepare(
+            "SELECT notificationid, `order`, message 
+            FROM ordernotification 
+            WHERE user = :userid 
+            AND `read` = false");
+        $stmt->execute(array("userid" => $userid));
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $stmt2 = $this->pdo->prepare(
+            "UPDATE ordernotification 
+            SET `read` = true 
+            WHERE user = :userid 
+            AND `read` = false");
+        $stmt2->execute(array("userid" => $userid));
+
+        $this->pdo->commit();
+
+        return $results;
     }
 }
 ?>

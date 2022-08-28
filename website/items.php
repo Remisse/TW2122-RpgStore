@@ -5,6 +5,7 @@
     $template_params["template"] = "itemgrid.php";
     $template_params["js"] = array(
         "js/common.js",
+        "js/aside-sales.js",
         "js/item-grid.js"
     );
 

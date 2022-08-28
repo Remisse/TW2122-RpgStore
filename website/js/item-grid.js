@@ -1,13 +1,19 @@
 $(document).ready(function() {
     $.ajax({url: `api/items-api.php${location.search}`, dataType: "json", type: "get", success: function(data) {
-        const container = $("main section:first-of-type")
+        const container = $("main div:first-of-type")
+
+        if (data.length === 0) {
+            $(`<p class="text-center">Nessun risultato.</p>`).insertBefore($(container))
+        } else {
+            $(`<p class="text-center">Numero di risultati: ${data.length}</p>`).insertBefore($(container))
+        }
 
         $(data).each(function() {
             const footer = document.createElement("footer")
             const footerDiv = document.createElement("div")
-            footerDiv.className = "card-footer bg-transparent text-end"
+            footerDiv.className = "card-footer bg-transparent text-end p-2"
 
-            const buyButton = addToCartButton(this)
+            const buyButton = addToCartButton("btn btn-primary w-100", `<img src="svg/cart-plus.svg" alt="Aggiungi al carrello" />`, this["itemid"])
 
             const card = itemToCard(this, footer, "row row-cols-md-1")
 

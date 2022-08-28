@@ -6,10 +6,10 @@
     if (isset($_POST["email"]) && isset($_POST["password"])) {
         $result = $dbh->checkLogin($_POST["email"]);
 
-        if ($result == false || !password_verify($_POST["password"], $result["password"])) {
+        if (count($result) == 0 || !password_verify($_POST["password"], $result["password"])) {
             $template_params["error"] = "Verificare che indirizzo e-mail e password siano corretti.";
         } else {
-            Session::registerLoggedUser($result);
+            Session::register($result);
         }
     }
 

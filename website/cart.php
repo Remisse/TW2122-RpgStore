@@ -5,6 +5,7 @@
     $template_params["template"] = "cart-content.php";
     $template_params["js"] = array(
         "js/common.js",
+        "js/aside-sales.js",
         "js/cart-list.js"
     );
     

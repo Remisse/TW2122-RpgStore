@@ -12,10 +12,11 @@ $(document).ready(function() {
                         <form title="Quantità dell'articolo" action="api/cart-api.php" class="d-flex flex-row flex-lg-column justify-content-around">
                             <ul class="list-inline d-flex align-items-center justify-content-end">
                                 <li class="list-inline-item d-flex align-items-center">
-                                    <label for="qty" class="me-1">Quantità</label><input type="number" name="qty" id="qty${this["itemid"]}" class="form-control" min="0" max="${this["itemstock"]}" value="${this["cartqty"]}" />
+                                    <label for="qty${this["itemid"]}" class="me-1">Quantità</label>
+                                    <input type="number" name="qty${this["itemid"]}" id="qty${this["itemid"]}" class="form-control" min="0" max="${this["itemstock"]}" value="${this["cartqty"]}" />
                                 </li>
                                 <li class="list-inline-item">
-                                    <input type="submit" name="submit" id="submitqty${this["itemid"]}" class="btn btn-outline-primary mt-1 p-1" value="Modifica" />
+                                    <input type="submit" name="submit" id="submitqty${this["itemid"]}" class="btn btn-outline-secondary p-1" value="Modifica" />
                                 </li>
                             </ul>
                             <input type="hidden" name="action" value="set" />

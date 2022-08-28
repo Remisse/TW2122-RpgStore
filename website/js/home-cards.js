@@ -1,12 +1,8 @@
+const ulClass = "list-group list-group-vertical-sm list-group-horizontal-md gap-1 px-0"
+const liClass = "list-group-item list-group-item-action d-flex flex-fill border rounded align-items-center justify-content-center my-2"
+const linkClass = "stretched-link lead"
+
 $(document).ready(function() {
-    appendBrands(
-        "section > section:first-of-type > div > div", 
-        "list-group list-group-vertical-sm list-group-horizontal-md justify-content-evenly px-0",
-        "list-group-item card text-center align-self-center col-12 col-md-3 my-2"
-    )
-    appendMainCategories(
-        "section > section:last-of-type > div > div", 
-        "list-group list-group-vertical-sm list-group-horizontal-md justify-content-evenly px-0",
-        "list-group-item card text-center align-self-center col-12 col-md-3 my-2"
-    )
+    appendBrands("main section:first-of-type", ulClass, liClass, linkClass)
+    appendMainCategories("main section:last-of-type", ulClass, liClass, linkClass)
 })

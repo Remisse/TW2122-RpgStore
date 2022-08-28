@@ -1,6 +1,15 @@
-header > h1 > a, nav a {
+body > div {
+    max-width: 1200px;
+}
+
+body > header h1 > a, nav a {
     text-decoration: none;
     color: #f8f9fa !important;
+}
+
+main section ul li a {
+    text-decoration: none;
+    color: #152a23 !important;
 }
 
 header > h1 > a:hover, aside a:hover, section a:hover {
@@ -11,12 +20,21 @@ main section > section ul > li {
     box-sizing: border-box !important;
 }
 
+main section section article footer li input[type="submit"] {
+    color: #152a23;
+    border-color: #345a5e;
+}
+
 img[src$=".svg"] {
     filter: invert(100%);
 }
 
 main article img:first-of-type {
     max-width: 120px;
+}
+
+main article header img:first-of-type {
+    max-width: 75%;
 }
 
 aside img:first-of-type {
@@ -29,7 +47,7 @@ aside p {
 
 aside a {
     text-decoration: none;
-    color: black;
+    color: #152a23;
 }
 
 aside p:nth-child(2) > a {
@@ -37,6 +55,11 @@ aside p:nth-child(2) > a {
     font-weight: bold;
 }
 
-label[for="sitesearch"], label[for="billing"] {
+label[for="search"], label[for="billing"] {
     display: none;
+}
+
+h6 > a {
+    text-decoration: none;
+    color: #152a23 !important;
 }
