@@ -4,5 +4,5 @@ const linkClass = "stretched-link lead"
 
 $(document).ready(function() {
     appendBrands("main section:first-of-type", ulClass, liClass, linkClass)
-    appendMainCategories("main section:last-of-type", ulClass, liClass, linkClass)
+    appendCategories("main", "main section:last-of-type", ulClass, liClass, linkClass)
 })

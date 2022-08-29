@@ -14,5 +14,5 @@
 
     $notificationsCount = $dbh->getUnreadNotificationsCount(Session::id());
 
-    define("UPLOAD_DIR", "./upload/");
+    define("UPLOAD_DIR", "upload/");
 ?>

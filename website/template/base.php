@@ -5,7 +5,6 @@
     <title>RPG Store - <?php echo $template_params["title"]; ?></title>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
     <link href="style/style.css" rel="stylesheet" />
     <?php
     if (isset($template_params["js"])):
@@ -19,11 +18,11 @@
 </head>
 <body class="d-flex flex-column h-100 bg-light">
     <header>
-        <div class="row bg-dark overflow-hidden text-bg-dark py-2">
+        <div class="container-fluid bg-dark overflow-hidden text-bg-dark py-2">
             <h1 class="text-center text-nowrap"><a href="index.php">RPG Store</a></h1>
         </div>
         <div class="container-fluid px-0 overflow-visible">
-            <div class="row bg-dark d-flex justify-content-between align-items-center py-1">
+            <div class="row bg-dark d-flex align-items-center py-1">
                 <div class="col-8">
                     <nav class="navbar navbar-expand-lg navbar-dark ps-2 py-0">
                         <button type="button" class="navbar-toggler p-2" data-bs-toggle="offcanvas" data-bs-target="nav > div:first-of-type">
@@ -61,12 +60,12 @@
                                             </li>
                                     <?php endif; ?>
                                     <li>
-                                        <form title="Cerca nel sito" method="get" action="items.php" class="d-flex ms-2">
+                                        <form title="Cerca nel sito" method="get" action="items.php" class="ms-2">
                                             <ul class="list-group list-group-horizontal bg-dark gap-1">
                                                 <li class="list-group-item p-0 bg-dark">
                                                     <!-- This label is ignored by accessibility checkers for some reason. -->
-                                                    <label for="search">Cerca nel sito</label>
-                                                    <input type="search" name="search" id="search" role="search" placeholder="Scrivi..." class="form-control me-2" />
+                                                    <label for="search" class="d-none">Cerca nel sito</label>
+                                                    <input type="search" name="search" id="search" role="search" placeholder="Cerca..." class="form-control me-2" />
                                                 </li>
                                                 <li class="list-group-item p-0 bg-dark">
                                                     <button type="submit" class="btn btn-primary">
@@ -95,7 +94,7 @@
                             </span>
                         </a>
                         <div class="dropdown">
-                            <a class="nav-link dropdown-toggle font-monospace text-nowrap" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle font-monospace text-nowrap" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 <img src="svg/bell.svg" alt="Notifiche" />
                                 <span>
                                     <?php 
@@ -135,5 +134,6 @@
             <p class="text-bg-dark text-center mb-0">RPG Store - Progetto per Tecnologie Web A.A. 2021/2022</p>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -15,5 +15,10 @@
         "js/itemdetails.js"
     );
 
+    if (Session::isUserLoggedIn() && $dbh->isUserAdmin(Session::id())) {
+        $template_params["adminbutton_template"] = "adminbutton-template.php";
+        $template_params["itemid"] = $_GET["id"];
+    }
+
     require_once("template/base.php");
 ?>

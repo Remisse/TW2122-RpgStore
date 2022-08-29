@@ -1,13 +1,15 @@
 $(document).ready(function() {
-    $.ajax({url: `api/items-api.php${location.search}`, dataType: "json", type: "get", success: function(data) {
-        const container = $("main div:first-of-type")
+    const container = $("main div:first-of-type")
 
+    $(container).html(getSpinnerElement("text-center", 3))
+    $.ajax({url: `api/items-api.php${location.search}`, dataType: "json", type: "get", success: function(data) {
         if (data.length === 0) {
             $(`<p class="text-center">Nessun risultato.</p>`).insertBefore($(container))
         } else {
             $(`<p class="text-center">Numero di risultati: ${data.length}</p>`).insertBefore($(container))
         }
-
+        
+        $(container).html("")
         $(data).each(function() {
             const footer = document.createElement("footer")
             const footerDiv = document.createElement("div")

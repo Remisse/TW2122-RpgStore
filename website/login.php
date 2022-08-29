@@ -15,6 +15,7 @@
 
     if (Session::isUserLoggedIn()) {
         $template_params["title"] = "Profilo";
+        $template_params["admin"] = $dbh->isUserAdmin(Session::id());
         $template_params["template"] = "login-home.php";
     } else {
         $template_params["title"] = "Accedi";

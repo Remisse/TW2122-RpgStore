@@ -166,12 +166,12 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`order_has_item` (
     CONSTRAINT `fk_order_has_item_1`
         FOREIGN KEY (`item`)
         REFERENCES `rpgstore`.`item` (`itemid`)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE NO ACTION,
     CONSTRAINT `fk_order_has_item_2`
         FOREIGN KEY (`order`)
         REFERENCES `rpgstore`.`order` (`orderid`)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -189,12 +189,12 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`ordernotification` (
         CONSTRAINT `fk_notification_has_order`
         FOREIGN KEY (`order`)
         REFERENCES `rpgstore`.`order` (`orderid`)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE NO ACTION,
     CONSTRAINT `fk_notification_has_user`
         FOREIGN KEY (`user`)
         REFERENCES `rpgstore`.`user` (`userid`)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 

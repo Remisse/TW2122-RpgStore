@@ -22,7 +22,7 @@
                 <label for="confirmpassword">Conferma password</label><input type="password" name="confirmpassword" id="confirmpassword" required />
             </div>
             <div>
-                <input type="submit" value="Registrati" class="btn btn-primary" />
+                <input type="submit" value="Registrati" class="btn btn-success" />
             </div>
         </form>
     </section>

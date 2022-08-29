@@ -14,11 +14,20 @@ class DatabaseHelper {
         }
     }
 
+    public function getCategories() {
+        $stmt = $this->pdo->query(
+            "SELECT categoryid, categoryname 
+            FROM category 
+            ORDER BY categorysuper, categoryid ASC"
+        );
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getMainCategories() {
         $stmt = $this->pdo->query(
-            "SELECT categoryid, categoryname ".
-            "FROM category ".
-            "WHERE categorysuper IS NULL"
+            "SELECT categoryid, categoryname 
+            FROM category 
+            WHERE categorysuper IS NULL"
         );
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -53,10 +62,10 @@ class DatabaseHelper {
                     SELECT * 
                     FROM category 
                     WHERE categoryid = :categoryid 
-                    UNION ALL 
+                    UNION 
                     SELECT cat.* 
-                    FROM cte ct, category cat 
-                    WHERE cat.categorysuper = ct.categoryid) ".
+                    FROM cte cte2, category cat 
+                    WHERE cat.categorysuper = cte2.categoryid) ".
                 $commonQueryPart.
                 "JOIN cte ON cte.categoryid = itemcategory 
                 WHERE TRUE";
@@ -129,11 +138,22 @@ class DatabaseHelper {
         return $stmt->fetch(PDO::FETCH_COLUMN);
     }
 
+    public function getItemImage(int $id) {
+        $stmt = $this->pdo->prepare(
+            "SELECT itemimg 
+            FROM item 
+            WHERE itemid = :id"
+        );
+        $stmt->execute(array("id" => $id));
+
+        return $stmt->fetch(PDO::FETCH_COLUMN);
+    }
+
     public function getLatestItems(int $n = -1) {
         $query = 
-            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, brandshortname ".
-            "FROM item LEFT OUTER JOIN brand ON itembrand = brandid ".
-            "ORDER BY iteminsertiondate DESC";
+            "SELECT itemid, itemname, itemimg, itemprice, itemdiscount, itemprice - CAST(itemprice * itemdiscount AS UNSIGNED) AS pricediscount, itemstock, brandshortname 
+            FROM item LEFT OUTER JOIN brand ON itembrand = brandid 
+            ORDER BY iteminsertiondate ASC";
         if ($n > 0) {
             $query.=" LIMIT :n";
         }
@@ -175,6 +195,17 @@ class DatabaseHelper {
         $stmt->execute(array("itemgroup" => $friendly_ids));
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getItemColumnNames() {
+        $stmt = $this->pdo->query(
+            "SELECT COLUMN_NAME 
+            FROM information_schema.columns 
+            WHERE TABLE_SCHEMA = 'rpgstore' 
+            AND TABLE_NAME = 'item'"
+        );
+
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 
     public function checkLogin(string $email) {
@@ -226,14 +257,14 @@ class DatabaseHelper {
         return $this->pdo->commit();
     }
 
-    public function getUserDetails($userid) {
+    public function getUserDetails(int $userid) {
         $stmt = $this->pdo->prepare("SELECT userid, email, name, billingaddress FROM user WHERE userid = :userid");
         $stmt->execute(array("userid" => $userid));
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function insertClient($email, $password, $name) {
+    public function insertClient(string $email, string $password, string $name) {
         $this->pdo->beginTransaction();
 
         $stmt = $this->pdo->prepare("INSERT INTO user (email, password, name) VALUES (:email, :password, :name)");
@@ -246,28 +277,28 @@ class DatabaseHelper {
         return $this->pdo->commit();
     }
 
-    public function isEmailAvailable($email) {
+    public function isEmailAvailable(string $email) {
         $stmt = $this->pdo->prepare("SELECT email FROM user WHERE email = :email");
         $stmt->execute(array("email" => $email));
 
         return count($stmt->fetchAll(PDO::FETCH_ASSOC)) == 0;
     }
 
-    public function isUserAdmin($userid) {
+    public function isUserAdmin(int $userid) {
         $stmt = $this->pdo->prepare("SELECT user FROM admin WHERE user = :userid");
         $stmt->execute(array("userid" => $userid));
 
         return count($stmt->fetchAll(PDO::FETCH_ASSOC)) == 1;
     }
 
-    public function getUnreadNotificationsCount($userid) {
+    public function getUnreadNotificationsCount(int $userid) {
         $stmt = $this->pdo->prepare("SELECT COUNT(*) AS n FROM ordernotification WHERE user = :userid AND `read` = false");
         $stmt->execute(array("userid" => $userid));
 
         return $stmt->fetch(PDO::FETCH_COLUMN);
     }
 
-    public function getUnreadNotificationsAndMarkAsRead($userid) {
+    public function getUnreadNotificationsAndMarkAsRead(int $userid) {
         $this->pdo->beginTransaction();
 
         $stmt = $this->pdo->prepare(
@@ -288,6 +319,51 @@ class DatabaseHelper {
         $this->pdo->commit();
 
         return $results;
+    }
+
+    public function insertItem(array $parameters) {
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO item 
+            SET itemname = :itemname, 
+                itemdescription = :itemdescription, 
+                itemimg = :itemimg, 
+                iteminsertiondate = CURDATE(), 
+                itemprice = :itemprice, 
+                itemdiscount = :itemdiscount, 
+                itemstock = :itemstock, 
+                itemcategory = :itemcategory, 
+                itembrand = :itembrand, 
+                itemcreator = :itemcreator, 
+                itempublisher = :itempublisher"
+        );
+        
+        return $stmt->execute($parameters);
+    }
+
+    public function updateItem(array $parameters) {
+        $stmt = $this->pdo->prepare(
+            "UPDATE item 
+            SET itemname = :itemname, 
+                itemdescription = :itemdescription, 
+                itemimg = :itemimg, 
+                iteminsertiondate = CURDATE(), 
+                itemprice = :itemprice, 
+                itemdiscount = :itemdiscount, 
+                itemstock = :itemstock, 
+                itemcategory = :itemcategory, 
+                itembrand = :itembrand, 
+                itemcreator = :itemcreator, 
+                itempublisher = :itempublisher 
+            WHERE itemid = :itemid"
+        );
+
+        return $stmt->execute($parameters);
+    }
+
+    public function deleteItem(int $itemid) {
+        $stmt = $this->pdo->prepare("DELETE FROM item WHERE itemid = :itemid");
+
+        return $stmt->execute(array("itemid" => $itemid));
     }
 }
 ?>

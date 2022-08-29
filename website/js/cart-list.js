@@ -1,6 +1,9 @@
 $(document).ready(function() {
+    const container = $("main section > ul")
+
+    $(container).html(getSpinnerElement("text-center", 3))
     $.ajax({url: "api/cart-api.php?action=whole_cart", dataType: "json", success: function(result) {
-            const container = $("main section > ul")
+            $(container).html("")
 
             if (result["cartitems"].length === 0) {
                 container.append(`<p class="text-center">Il tuo carrello è vuoto.</p>`)

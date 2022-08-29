@@ -61,10 +61,20 @@ function itemToCard(item, footer, rowClass) {
 //
 // Misc
 //
-function getSpinnerElement(htmlClass) {
+function getSpinnerElement(htmlClass, size) {
+    let sizeClass = "";
+    switch (size) {
+        case 1:
+            sizeClass = "spinner-border-sm";
+            break;
+        case 3:
+            sizeClass = "spinner-border-lg";
+            break;
+    }
+
     return `
     <div class="${htmlClass}">
-        <div class="spinner-border spinner-border-sm" role="status">
+        <div class="spinner-border ${sizeClass}" role="status">
             <span class="visually-hidden">Caricamento...</span>
         </div>
     </div>`
@@ -81,21 +91,21 @@ function updateCartInNav(count) {
 //
 // nav
 //
-async function appendMainCategories(container, ulClass, liClass, linkClass) {
-    $.ajax({url: "api/maincategories-api.php", dataType: "json", success: function(data) {
-            const ul = document.createElement("ul")
-            ul.className = ulClass
+async function appendCategories(type, container, ulClass, liClass, linkClass) {
+    $.ajax({url: `api/categories-api.php?type=${type}`, dataType: "json", success: function(data) {
+        const ul = document.createElement("ul")
+        ul.className = ulClass
 
-            $(data).each(function() {
-                const li = document.createElement("li")
-                li.className = liClass
-                li.innerHTML = `<a class="${linkClass}" href="items.php?categoryid=${this["categoryid"]}">${this["categoryname"]}</a>`
+        $(data).each(function() {
+            const li = document.createElement("li")
+            li.className = liClass
+            li.innerHTML = `<a class="${linkClass}" href="items.php?categoryid=${this["categoryid"]}">${this["categoryname"]}</a>`
 
-                $(ul).append(li)
-            })
-            $(container).append(ul)
-        }
-    })
+            $(ul).append(li)
+        })
+        $(container).append(ul)
+    }
+})
 }
 
 async function appendBrands(container, ulClass, liClass, linkClass) {
@@ -123,7 +133,8 @@ $(document).ready(function() {
         "dropdown-item",
         ""
     )
-    appendMainCategories(
+    appendCategories(
+        "all",
         "header nav:first-of-type > div > div > ul > li:nth-of-type(2)", 
         "dropdown-menu dropdown-menu-dark",
         "dropdown-item",
@@ -135,7 +146,7 @@ $(document).ready(function() {
     const button = $("nav > div > a");
 
     $(button).on("click", function() {
-        $(dropdown).html(getSpinnerElement("text-center"));
+        $(dropdown).html(getSpinnerElement("text-center", 1));
 
         $.ajax({url: "api/notifications-api.php", dataType: "json", success: function(data) {
             console.log(data.length)

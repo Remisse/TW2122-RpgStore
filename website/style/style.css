@@ -2,7 +2,7 @@ body > div {
     max-width: 1200px;
 }
 
-body > header h1 > a, nav a {
+body > header h1 > a, body > header nav a {
     text-decoration: none;
     color: #f8f9fa !important;
 }
@@ -12,7 +12,7 @@ main section ul li a {
     color: #152a23 !important;
 }
 
-header > h1 > a:hover, aside a:hover, section a:hover {
+h1 > a:hover, aside a:hover, main > section > ul > li > a:hover, h6 a:hover {
     color: green !important;
 }
 
@@ -20,9 +20,8 @@ main section > section ul > li {
     box-sizing: border-box !important;
 }
 
-main section section article footer li input[type="submit"] {
-    color: #152a23;
-    border-color: #345a5e;
+main section article footer form li input[type="submit"]:hover, main > div > section > div > ul > li > a:hover {
+    color: white !important;
 }
 
 img[src$=".svg"] {
@@ -55,11 +54,16 @@ aside p:nth-child(2) > a {
     font-weight: bold;
 }
 
-label[for="search"], label[for="billing"] {
-    display: none;
-}
-
 h6 > a {
     text-decoration: none;
     color: #152a23 !important;
+}
+
+.btn-outline-secondary {
+    color: #152a23;
+    border-color: #345a5e;
+}
+
+.btn-danger {
+    color: white !important;
 }
