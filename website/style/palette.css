@@ -1,0 +1,11 @@
+:root {
+    --primary: #3455db;
+    --secondary: #785ef0;
+    --warning: #fac200;
+    --danger: #9f2f00;
+    
+    --text-on-primary: #fff;
+    --text-on-secondary: #fff;
+    --text-on-warning: #000;
+    --text-on-danger: #fff;
+}

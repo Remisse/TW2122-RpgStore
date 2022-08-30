@@ -12,7 +12,7 @@ function formatItemAvailability(item) {
     return stock === 0
             ? "Non disponibile"
         : stock === 1
-            ? "<s>Solo 1 disponibile!</s>"
+            ? "<strong>Solo 1 disponibile!</strong>"
         : stock < 10
             ? `${stock} disponibili`
         : "Disponibile"
@@ -142,27 +142,38 @@ $(document).ready(function() {
     )
 
     // Show all unread notifications when clicking on the appointed nav button
-    const dropdown = $("nav > div > ul");
-    const button = $("nav > div > a");
+    const dropdown = $("#notif-dropdown > ul");
+    const button = $("#notif-dropdown > a");
 
     $(button).on("click", function() {
         $(dropdown).html(getSpinnerElement("text-center", 1));
 
         $.ajax({url: "api/notifications-api.php", dataType: "json", success: function(data) {
-            console.log(data.length)
-            if (data.length === 0) {
+            if (data["orders"].length === 0 && data["items"].length === 0) {
                 $(dropdown).html(`<li class="dropdown-item">Nessuna notifica.</li>`);
             } else {
                 $(dropdown).html("");
 
-                $(data).each(function() {
+                $(data["orders"]).each(function() {
                     $(dropdown).append(
                         `<li class="dropdown-item">
-                            ${this["message"]} (#${this["order"]})
+                            <a href="order.php?id=${this["orderid"]}" class="text-decoration-none stretched-link text-dark">
+                                ${this["message"]} (#${this["orderid"]})
+                            </a>
+                        </li>`
+                    );
+                });
+                $(data["items"]).each(function() {
+                    $(dropdown).append(
+                        `<li class="dropdown-item">
+                            <a href="itemdetails.php?id=${this["itemid"]}" class="text-decoration-none stretched-link text-dark">
+                                ${this["message"]} (${"brandshortname" in this ? this["brandshortname"] + " " : ""}${this["itemname"]})
+                            </a>
                         </li>`
                     );
                 });
 
+                // Clear the notifications badge.
                 $(button).children("span")
                     .html("")
             }

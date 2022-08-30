@@ -13,6 +13,10 @@ function populateAside(container, apiUrl, title) {
             // Remove the spinner
             $(aside).children("div").remove()
 
+            if (data.length === 0) {
+                $(aside).append(`<p class="text-center">Nessun risultato.</p>`)
+            }
+
             $(data).each(function() {
                 const game = "brandshortname" in this ? `${this["brandshortname"]} ` : ""
         

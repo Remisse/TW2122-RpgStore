@@ -21,22 +21,8 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`user` (
   `password` VARCHAR(255) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `billingaddress` VARCHAR(100),
-  PRIMARY KEY (`userid`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `rpgstore`.`client`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `rpgstore`.`client` (
-  `user` INT NOT NULL,
-  PRIMARY KEY (`user`),
-  INDEX `fk_client_is_user_idx` (`user` ASC),
-  CONSTRAINT `fk_client_is_user`
-    FOREIGN KEY (`user`)
-    REFERENCES `rpgstore`.`user` (`userid`)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`userid`),
+  UNIQUE (`email`))
 ENGINE = InnoDB;
 
 
@@ -65,6 +51,8 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`brand` (
   `brandpopularity` INT NOT NULL,
   `brandcoverimg` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`brandid`),
+  UNIQUE (`brandname`),
+  UNIQUE (`brandshortname`),
   FULLTEXT (`brandname`))
 ENGINE = InnoDB;
 
@@ -111,6 +99,7 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`category` (
   `categoryname` VARCHAR(50) NOT NULL,
   `categorysuper` INT,
   PRIMARY KEY (`categoryid`),
+  UNIQUE (`categoryname`),
   FULLTEXT (`categoryname`),
   INDEX `fk_category_has_supercategory_idx` (`categorysuper` ASC),
   CONSTRAINT `fk_category_has_supercategory`
@@ -137,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`item` (
   `itembrand` INT,
   `itemcreator` VARCHAR(100) NOT NULL,
   `itempublisher` VARCHAR(100),
+  `deleted` BOOLEAN NOT NULL DEFAULT false,
   PRIMARY KEY (`itemid`),
   FULLTEXT (`itemname`),
   CONSTRAINT `fk_item_part_of_brand`
@@ -186,12 +176,35 @@ CREATE TABLE IF NOT EXISTS `rpgstore`.`ordernotification` (
     `message` VARCHAR(100) NOT NULL,
     `read` BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY (`notificationid`),
-        CONSTRAINT `fk_notification_has_order`
+        CONSTRAINT `fk_ordernotification_has_order`
         FOREIGN KEY (`order`)
         REFERENCES `rpgstore`.`order` (`orderid`)
         ON DELETE CASCADE
         ON UPDATE NO ACTION,
-    CONSTRAINT `fk_notification_has_user`
+    CONSTRAINT `fk_ordernotification_has_user`
+        FOREIGN KEY (`user`)
+        REFERENCES `rpgstore`.`user` (`userid`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `rpgstore`.`itemnotification`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `rpgstore`.`itemnotification` (
+    `notificationid` INT NOT NULL AUTO_INCREMENT,
+    `user` INT NOT NULL,
+    `item` INT NOT NULL,
+    `message` VARCHAR(100) NOT NULL,
+    `read` BOOLEAN NOT NULL DEFAULT false,
+    PRIMARY KEY (`notificationid`),
+        CONSTRAINT `fk_itemnotification_has_item`
+        FOREIGN KEY (`item`)
+        REFERENCES `rpgstore`.`item` (`itemid`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION,
+    CONSTRAINT `fk_itemnotification_has_user`
         FOREIGN KEY (`user`)
         REFERENCES `rpgstore`.`user` (`userid`)
         ON DELETE CASCADE

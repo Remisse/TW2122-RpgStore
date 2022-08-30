@@ -1,8 +1,11 @@
 $(document).ready(function() {
-    $.ajax({url: `api/items-api.php${location.search}`, dataType: "json", success: function(item) {
-            $(item).each(function() {
-                const article = $("main article")
+    const article = $("main article")
+    $(article).html(getSpinnerElement("text-center", 3))
 
+    $.ajax({url: `api/items-api.php${location.search}`, dataType: "json", success: function(item) {
+            $(article).html("")
+            
+            $(item).each(function() {
                 const gameShort = "brandshortname" in this ? `${this["brandshortname"]} ` : ""
 
                 const footer = document.createElement("footer")

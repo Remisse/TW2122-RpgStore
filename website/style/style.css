@@ -1,26 +1,93 @@
+/* Bootstrap classes */
+
+.btn-primary {
+    color: white !important;
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.btn-secondary {
+    color: var(--text-on-secondary) !important;
+    background-color: var(--secondary) !important;
+    border-color: var(--secondary) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.btn-outline-secondary {
+    color: #152a23;
+    border-color: #345a5e;
+}
+
+.btn-outline-secondary:hover {
+    color: white !important;
+}
+
+.btn-danger {
+    color: var(--text-on-danger) !important;
+    background-color: var(--danger) !important;
+    border-color: var(--danger) !important;
+}
+
+.nav-item > .active {
+    color: var(--text-on-secondary) !important;
+    background-color: var(--secondary) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary) !important;;
+}
+
+.text-bg-primary {
+    background-color: var(--primary) !important;
+}
+
+.btn:hover, .nav-link:not(.active):hover {
+    filter: saturate(125%);
+}
+
+.nav-link:not(.active):hover {
+    opacity: 75% !important;
+}
+
+/* Custom classes */
+
+.text-on-primary {
+    color: var(--text-on-primary) !important;
+}
+
+.text-on-secondary {
+    color: var(--text-on-secondary) !important;
+}
+
+/* Rules for specific elements */
+
 body > div {
     max-width: 1200px;
 }
 
 body > header h1 > a, body > header nav a {
     text-decoration: none;
-    color: #f8f9fa !important;
+    color: white !important;
 }
 
-main section ul li a {
+main > section > div > ul > li a:hover {
     text-decoration: none;
-    color: #152a23 !important;
+    color: white !important;
 }
 
-h1 > a:hover, aside a:hover, main > section > ul > li > a:hover, h6 a:hover {
-    color: green !important;
+h1 > a:hover, h6 a:hover {
+    opacity: 75% !important;
 }
 
 main section > section ul > li {
     box-sizing: border-box !important;
 }
 
-main section article footer form li input[type="submit"]:hover, main > div > section > div > ul > li > a:hover {
+main section article footer form li input[type="submit"]:hover {
     color: white !important;
 }
 
@@ -59,11 +126,7 @@ h6 > a {
     color: #152a23 !important;
 }
 
-.btn-outline-secondary {
-    color: #152a23;
-    border-color: #345a5e;
-}
-
-.btn-danger {
-    color: white !important;
+label[for="search"] {
+    font-size: smaller;
+    opacity: 75%;
 }

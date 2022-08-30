@@ -13,7 +13,7 @@
     $items = $dbh->getItemPrices(Cart::getRaw());
     addCartQuantityForEachItem($items);
     
-    if ($dbh->insertOrder(Session::id(), $items, "È stato effettuato un nuovo ordine.")) {
+    if ($dbh->insertOrder(Session::id(), $items, "È stato effettuato un nuovo ordine.", "Un oggetto non è più disponibile.")) {
         Cart::empty();
         $template_params["template"] = "order-confirmation.php";
     } else {

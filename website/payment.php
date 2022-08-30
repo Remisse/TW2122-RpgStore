@@ -2,7 +2,7 @@
     require_once("bootstrap.php");
 
     if (!Session::isUserLoggedIn()) {
-        header("location: login.php");
+        header("location: login.php?redirect=payment.php");
     }
 
     $template_params["title"] = "Dettagli dell'ordine";

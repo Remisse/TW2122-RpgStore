@@ -12,6 +12,8 @@
             $stock = $dbh->getItemStock($_GET["id"] ?? -1);
             if ($stock != null && $stock > 0) {
                 $result["msg"] = Cart::add($_GET["id"]) ? "Aggiunto" : "Già nel carrello";
+            } else if ($stock == 0) {
+                $result["msg"] = "Non disponibile";
             }
             break;
         case "set":

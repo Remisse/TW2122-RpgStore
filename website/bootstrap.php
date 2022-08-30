@@ -12,6 +12,7 @@
 
     $dbh = new DatabaseHelper("localhost", "root", "root", "rpgstore", "utf8mb4");
 
+    $cartCount = Cart::countAll();
     $notificationsCount = $dbh->getUnreadNotificationsCount(Session::id());
 
     define("UPLOAD_DIR", "upload/");

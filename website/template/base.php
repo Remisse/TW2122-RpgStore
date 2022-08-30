@@ -5,6 +5,7 @@
     <title>RPG Store - <?php echo $template_params["title"]; ?></title>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous" />
+    <link href="style/palette.css" rel="stylesheet" />
     <link href="style/style.css" rel="stylesheet" />
     <?php
     if (isset($template_params["js"])):
@@ -18,9 +19,7 @@
 </head>
 <body class="d-flex flex-column h-100 bg-light">
     <header>
-        <div class="container-fluid bg-dark overflow-hidden text-bg-dark py-2">
-            <h1 class="text-center text-nowrap"><a href="index.php">RPG Store</a></h1>
-        </div>
+        <h1 class="text-center bg-dark text-nowrap m-0"><a href="index.php">RPG Store</a></h1>
         <div class="container-fluid px-0 overflow-visible">
             <div class="row bg-dark d-flex align-items-center py-1">
                 <div class="col-8">
@@ -48,27 +47,26 @@
                                             <li class="nav-item">
                                                 <a class="nav-link" href="login.php">Accedi</a>
                                             </li>
-                                            <li class="nav-item">
+                                            <li class="nav-item me-2">
                                                 <a class="nav-link" href="signup.php">Registrati</a>
                                             </li>
                                     <?php else: ?>
                                             <li class="nav-item">
                                                 <a class="nav-link" href="login.php">Profilo</a>
                                             </li>
-                                            <li class="nav-item">
+                                            <li class="nav-item me-2">
                                                 <a class="nav-link" href="logout.php">Esci</a>
                                             </li>
                                     <?php endif; ?>
                                     <li>
-                                        <form title="Cerca nel sito" method="get" action="items.php" class="ms-2">
-                                            <ul class="list-group list-group-horizontal bg-dark gap-1">
-                                                <li class="list-group-item p-0 bg-dark">
-                                                    <!-- This label is ignored by accessibility checkers for some reason. -->
-                                                    <label for="search" class="d-none">Cerca nel sito</label>
-                                                    <input type="search" name="search" id="search" role="search" placeholder="Cerca..." class="form-control me-2" />
+                                        <form action="items.php" method="get" role="search" class="ms-2">
+                                            <ul class="list-group list-group-horizontal">
+                                                <li class="list-group-item p-0 bg-dark d-flex">
+                                                    <label for="search" class="text-light me-1">Cerca nel sito</label>
+                                                    <input type="search" name="search" id="search" class="form-control me-2" value="<?php echo $_GET["search"] ?? ""; ?>" />
                                                 </li>
                                                 <li class="list-group-item p-0 bg-dark">
-                                                    <button type="submit" class="btn btn-primary">
+                                                    <button type="submit" class="btn btn-secondary">
                                                         <img src="svg/search.svg" alt="Effettua ricerca" />
                                                     </button>
                                                 </li>
@@ -82,21 +80,20 @@
                 </div>
                 <div class="col-4">
                     <nav class="nav justify-content-end flex-nowrap">
-                        <a class="nav-link font-monospace text-nowrap" href="cart.php">
+                        <a class="nav-link text-nowrap" href="cart.php" role="button" aria-live="polite">
                             <img src="svg/cart.svg" alt="Carrello" />
-                            <span>
-                                <?php 
-                                $cartCount = Cart::countAll();
+                            <span class="font-monospace">
+                                <?php
                                 if ($cartCount > 0) {
                                     echo "(".$cartCount.")";
                                 }
                                 ?>
                             </span>
                         </a>
-                        <div class="dropdown">
-                            <a class="nav-link dropdown-toggle font-monospace text-nowrap" href="#" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        <div class="dropdown" id="notif-dropdown">
+                            <a class="nav-link dropdown-toggle text-nowrap" href="#" role="button" aria-live="polite" aria-expanded="false" data-bs-toggle="dropdown" data-bs-auto-close="outside">
                                 <img src="svg/bell.svg" alt="Notifiche" />
-                                <span>
+                                <span class="font-monospace">
                                     <?php 
                                     if ($notificationsCount > 0) {
                                         echo "(".$notificationsCount.")";

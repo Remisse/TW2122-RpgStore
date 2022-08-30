@@ -8,7 +8,7 @@
         $items = array($dbh->getItem($_GET["id"]));
     } else {
         $parameters = array_merge(array("limit" => 10), $_GET);
-        if (isset($parameters["search"])) {
+        if (isset($parameters["search"]) && $parameters["search"] !== "") {
             $temp = htmlspecialchars_decode($parameters["search"]);
             $temp = str_replace(" ", " +", $temp);
             $parameters["search"] = "+".$temp;

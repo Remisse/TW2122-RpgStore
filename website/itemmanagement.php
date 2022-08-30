@@ -10,6 +10,33 @@
         header("location: index.php");
     }
 
+    $messages = array(
+        0 => "Si è verificato un errore inaspettato",
+        1 => "Nome vuoto",
+        2 => "Descrizione vuota",
+        3 => "Immagine non caricata",
+        4 => "Prezzo non valido",
+        5 => "Sconto non valido",
+        6 => "Disponibilità non valida",
+        7 => "Categoria non valida",
+        8 => "Gioco non valido",
+        9 => "Produttore vuoto"
+    );
+
+    // Check if 'itemprocessing.php' has reported an error and show it as an alert.
+    if (isset($_GET["error"])) {
+        $template_params["alert"] = $errors((int)$_GET["error"] ?? 0);
+    }
+
+    // Create an empty item
+    $template_params["item"] = array_fill_keys($dbh->getItemColumnNames(), "");
+    if (($_GET["action"] === "update" || $_GET["action"] === "delete")) {
+        $template_params["item"] = $dbh->getItem($_GET["id"] ?? -1);
+        if ($template_params["item"] === false) {
+            $template_params["error"] = "Articolo non trovato.";
+        }
+    }
+
     switch ($_GET["action"]) {
         case "insert":
             $template_params["title"] = "Creazione articolo";
@@ -23,15 +50,6 @@
         default:
             header("location: index.php");
             break;
-    }
-
-    // Create an empty item
-    $template_params["item"] = array_fill_keys($dbh->getItemColumnNames(), "");
-    if (($_GET["action"] === "update" || $_GET["action"] === "delete")) {
-        $template_params["item"] = $dbh->getItem($_GET["id"] ?? -1);
-        if (!isset($template_params["item"])) {
-            $template_params["error"] = "Articolo non trovato";
-        }
     }
 
     $template_params["action"] = $_GET["action"];

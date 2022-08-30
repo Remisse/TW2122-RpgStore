@@ -1,9 +1,9 @@
-<form action="#" method="POST">
+<form action="#" method="post" enctype="multipart/form-data">
     <div class="text-center py-3">
         <h2>Accedi</h2>
     </div>
     <section>
-        <div class="container-fluid border rounded text-center p-3">
+        <div class="container-fluid border rounded bg-body text-center p-3">
             <?php if (isset($template_params["error"])): ?>
                 <div class="row">
                     <p><?php echo $template_params["error"]; ?></p>

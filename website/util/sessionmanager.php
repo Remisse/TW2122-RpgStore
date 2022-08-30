@@ -37,5 +37,9 @@ class Session {
     public static function name() {
         return Session::isUserLoggedIn() ? $_SESSION["name"] : false;
     }
+
+    public static function email() {
+        return Session::isUserLoggedIn() ? $_SESSION["email"] : false;
+    }
 }
 ?>

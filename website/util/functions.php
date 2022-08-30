@@ -13,6 +13,10 @@
         return $raw * (10 ** (2 - strlen($parts[1])));
     }
 
+    function bigintToHTMLDecimal($bigint) {
+        return substr(bigintToCurrencyFormat($bigint), 3);
+    }
+
     function stringPercentToFloat($string) {
         return floatval($string) / 100.0;
     }

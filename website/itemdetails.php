@@ -16,7 +16,7 @@
     );
 
     if (Session::isUserLoggedIn() && $dbh->isUserAdmin(Session::id())) {
-        $template_params["adminbutton_template"] = "adminbutton-template.php";
+        $template_params["admin"] = true;
         $template_params["itemid"] = $_GET["id"];
     }
 

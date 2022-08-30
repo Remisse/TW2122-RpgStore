@@ -1,36 +1,37 @@
 <?php
     require_once("bootstrap.php");
 
-    if (!Session::isUserLoggedIn() || !isset($_POST["action"])) {
+    if (!Session::isUserLoggedIn() || !$dbh->isUserAdmin(Session::id()) || !isset($_POST["action"])) {
         header("location: login.php");
     }
 
     $action = $_POST["action"];
+    $error = null; // Error code. Codes are defined in 'itemmanagement.php'.
     if ($action === "insert" || $action === "update") {
         if (!isset($_POST["itemname"])) {
-            $template_params["msg"] = "Nome vuoto";
+            $error = 1;
         } else if (!isset($_POST["itemdescription"])) {
-            $template_params["msg"] = "Descrizione vuota";
+            $error = 2;
         } else if ($action === "insert" && !isset($_FILES["itemimg"])) {
-            $template_params["msg"] = "Immagine non caricata";
+            $error = 3;
         } else if (!(isset($_POST["itemprice"]) && isHTMLPriceValid(strval($_POST["itemprice"])) && $_POST["itemprice"] >= 0)) {
-            $template_params["msg"] = "Prezzo non valido (".$_POST["itemprice"].")";
+            $error = 4;
         } else if (!(isset($_POST["itemdiscount"]) && isIntegerNumberValid(strval($_POST["itemdiscount"])) && $_POST["itemdiscount"] >= 0 && $_POST["itemdiscount"] <= 100)) {
-            $template_params["msg"] = "Sconto non valido";
+            $error = 5;
         } else if (!(isset($_POST["itemstock"]) && isIntegerNumberValid(strval($_POST["itemstock"])) && $_POST["itemstock"] >= 0)) {
-            $template_params["msg"] = "Disponibilità non valida";
+            $error = 6;
         } else if (!(isset($_POST["itemcategory"]) && in_array($_POST["itemcategory"], flatMap($dbh->getCategories(), "categoryid")))) {
-            $template_params["msg"] = "Categoria non valida (".$_POST["itemcategory"].")";
+            $error = 7;
         } else if (isset($_POST["itembrand"]) && !in_array($_POST["itembrand"], flatMap($dbh->getBrands(), "brandid"))) {
-            $template_params["msg"] = "Gioco non valido";
+            $error = 8;
         } else if (!isset($_POST["itemcreator"])) {
-            $template_params["msg"] = "Produttore vuoto";
+            $error = 9;
         }
 
-        if (isset($template_params["msg"])) {
+        if (isset($error)) {
             header("location: itemmanagement.php?action=".$action
                 .(isset($_POST["itemid"]) ? "&id=".$_POST["itemid"] : "")
-                ."&msg=".htmlentities($template_params["msg"]));
+                ."&error=".$error);
         }
 
         $parameters = array();
@@ -49,10 +50,11 @@
         if (isset($_FILES["itemimg"]) && isset($_POST["itemimg"]) && $_POST["itemimg"] !== "") {
             list($result, $msg) = uploadImage(UPLOAD_DIR, $_FILES["itemimg"]);
             if ($result == 0) {
-                header("location: adminarea.php?formmsg=".$msg);
+                header("location: login.php?area=adminarea-content&formmsg=".$msg);
             } 
             $parameters["itemimg"] = $msg;
         } else {
+            // If the image hasn't been uploaded and we've got up to this point, it means the user is editing the item and is fine with the current image.
             $parameters["itemimg"] = $dbh->getItemImage($_POST["itemid"]);
         }
 
@@ -60,12 +62,16 @@
             $msg = $dbh->insertItem($parameters) ? "Inserimento avvenuto correttamente" : "Errore durante l'inserimento dell'articolo.";
         } else {
             $parameters["itemid"] = $_POST["itemid"] ?? -1;
-
             $msg = $dbh->updateItem($parameters) ? "Articolo modificato con successo." : "Errore durante la modifica dell'articolo.";
         }
     } else if ($action === "delete") {
         $itemid = $_POST["itemid"] ?? -1;
-        $msg = $dbh->deleteItem($itemid) ? "Articolo eliminato con successo." : "Errore durante l'eliminazione dell'articolo";
+        $msg = $dbh->markItemAsDeleted($itemid) ? "Articolo eliminato con successo." : "Errore durante l'eliminazione dell'articolo";
+    } else if (($_GET["action"] ?? "") === "restore") {
+        // TODO Maybe create an ad-hoc page instead of hijacking this one
+        $itemid = $_GET["itemid"] ?? -1;
+        $msg = $dbh->restoreDeletedItem($_GET["id"] ?? -1) ? "Articolo recuperato con successo." : "Impossibile recuperare l'articolo";
+        header("location: login.php?area=itembin-content&formmsg=".$msg);
     }
-    header("location: adminarea.php?formmsg=".$msg);
+    header("location: login.php?area=adminarea-content&formmsg=".$msg);
 ?>
