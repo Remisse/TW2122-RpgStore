@@ -16,3 +16,4 @@
 ### Test con utenti
 
 - 6 persone, di cui 4 simili a Luca e 2 simili a Gino
+- effettuato durante le fasi finali dello sviluppo per ricevere feedback sulla facilità di navigazione
