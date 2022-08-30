@@ -554,8 +554,12 @@ class DatabaseHelper {
         $stmt = $this->pdo->prepare("UPDATE `order` SET status = :statusid WHERE orderid = :orderid");
         $stmt->execute(array("statusid" => $statusid, "orderid" => $orderid));
 
-        $stmt2 = $this->pdo->prepare("INSERT INTO ordernotification SET user = :userid, `order` = :orderid, message = :message");
-        $stmt2->execute(array("userid" => $userid, "orderid" => $orderid, "message" => $message));
+        $stmt2 = $this->pdo->prepare(
+            "INSERT INTO ordernotification (user, `order`, message)
+            SELECT userid, :orderid, :message
+            FROM user, admin
+            WHERE user = userid");
+        $stmt2->execute(array("orderid" => $orderid, "message" => $message));
 
         return $this->pdo->commit();
     }

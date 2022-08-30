@@ -51,13 +51,13 @@
 <aside class="border rounded bg-body text-center my-3">
     <h3 class="my-2">Azioni</h3>
     <div class="container-fluid py-2">
-        <div class="row g-2">
+        <div class="row g-2 text-center">
             <?php if (isset($template_params["admin"]) && $template_params["admin"]): ?>
                 <div class="col-12 col-md-6">
                     <a href="../ordermanagement.php?status=shipped&id=<?php echo $template_params["order"]["orderid"]; ?>" class="btn btn-secondary w-100">Segna come spedito</a>
                 </div>
             <?php endif; ?>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-6 text-center">
                 <a href="../order-confirmdelete.php?id=<?php echo $template_params["order"]["orderid"]; ?>" class="btn btn-danger w-100">Annulla ordine</a>
             </div>
         </div>
