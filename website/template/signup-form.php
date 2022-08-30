@@ -1,6 +1,6 @@
 <section>
     <div class="text-center py-3">
-        <h3>Crea un account</h3>
+        <h2>Crea un account</h2>
     </div>
     <section class="container-fluid border rounded bg-body p-3">
         <?php if (isset($template_params["error"])): ?>

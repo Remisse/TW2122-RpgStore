@@ -1,5 +1,5 @@
 <section class="mb-3">
-    <h3 class="text-center py-3">Effettua l'ordine</h3>
+    <h2 class="text-center py-3">Effettua l'ordine</h2>
     <?php if (isset($template_params["error"])): ?>
         <p class="alert alert-error"><?php echo $template_params["error"]; ?></p>
     <?php endif;?>
